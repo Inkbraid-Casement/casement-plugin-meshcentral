@@ -8,16 +8,18 @@ enable_testing()
 # needs besides nlohmann/json is part of Windows: WinHTTP for WebSockets and
 # TLS, WIC for the screen tiles.
 add_library(meshcentral STATIC
+    src/meshcentral/cursors.cpp
     src/meshcentral/desktop.cpp
     src/meshcentral/keys.cpp
     src/meshcentral/options.cpp
     src/meshcentral/tiles.cpp)
 target_include_directories(meshcentral PUBLIC src)
 target_compile_definitions(meshcentral PUBLIC CASEMENT_PLUGIN_VERSION="${PROJECT_VERSION}")
-target_link_libraries(meshcentral PUBLIC casement windowscodecs ole32 uuid)
+target_link_libraries(meshcentral PUBLIC casement windowscodecs ole32 uuid gdi32 user32)
 
 casement_test(unit_tests unit
     tests/unit/main.cpp
+    tests/unit/cursor_tests.cpp
     tests/unit/desktop_tests.cpp
     tests/unit/keys_tests.cpp
     tests/unit/options_tests.cpp
