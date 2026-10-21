@@ -10,14 +10,16 @@ enable_testing()
 add_library(meshcentral STATIC
     src/meshcentral/desktop.cpp
     src/meshcentral/keys.cpp
-    src/meshcentral/options.cpp)
+    src/meshcentral/options.cpp
+    src/meshcentral/tiles.cpp)
 target_include_directories(meshcentral PUBLIC src)
 target_compile_definitions(meshcentral PUBLIC CASEMENT_PLUGIN_VERSION="${PROJECT_VERSION}")
-target_link_libraries(meshcentral PUBLIC casement)
+target_link_libraries(meshcentral PUBLIC casement windowscodecs ole32 uuid)
 
 casement_test(unit_tests unit
     tests/unit/main.cpp
     tests/unit/desktop_tests.cpp
     tests/unit/keys_tests.cpp
-    tests/unit/options_tests.cpp)
+    tests/unit/options_tests.cpp
+    tests/unit/tiles_tests.cpp)
 target_link_libraries(unit_tests PRIVATE meshcentral)
