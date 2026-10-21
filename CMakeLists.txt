@@ -34,3 +34,10 @@ casement_test(unit_tests unit
     tests/unit/options_tests.cpp
     tests/unit/tiles_tests.cpp)
 target_link_libraries(unit_tests PRIVATE meshcentral)
+
+# Needs the MeshCentral server and agent that ci/e2e.sh starts.
+casement_test(e2e_tests e2e tests/e2e/meshcentral_tests.cpp)
+target_link_libraries(e2e_tests PRIVATE casement_sim meshcentral)
+target_compile_definitions(e2e_tests PRIVATE PLUGIN_EXE=L"$<TARGET_FILE_NAME:casement-meshcentral>")
+add_dependencies(e2e_tests casement-meshcentral)
+set_tests_properties(e2e_tests PROPERTIES TIMEOUT 900)
