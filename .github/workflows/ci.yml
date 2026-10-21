@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# A newer push to the same branch or pull request replaces a running check.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    name: Windows build (MSVC)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Configure
+        run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build build
+      - name: Unit tests
+        run: ctest --test-dir build --output-on-failure -L unit
+      - name: Package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist/meshcentral | Out-Null
+          Copy-Item build/casement-meshcentral.exe, plugin.json, icon.png, LICENSE, README.md, CHANGELOG.md dist/meshcentral/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: casement-meshcentral-windows-x64
+          path: dist/
+
+  linux:
+    name: Cross build and end-to-end tests (MinGW, Wine)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tools
+        run: |
+          sudo apt-get update
+          # wine64 alone has no wine command: that comes from the wine package.
+          sudo apt-get install -y --no-install-recommends mingw-w64 wine64 wine ninja-build cmake \
+            xvfb xauth x11-utils x11-xserver-utils xdotool xclip adwaita-icon-theme
+      # MeshCentral needs Node.js 20 or later.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Configure
+        run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=cmake/mingw-w64.cmake
+      - name: Build
+        run: cmake --build build
+      - name: Wine prefix
+        env:
+          WINEDEBUG: -all
+        run: wineboot --init && wineserver --wait
+      - name: Unit tests
+        env:
+          WINEDEBUG: -all
+        run: ctest --test-dir build --output-on-failure -L unit
+      - name: End-to-end tests
+        env:
+          WINEDEBUG: -all
+          CASEMENT_E2E: "1"
+        run: ci/e2e.sh build
