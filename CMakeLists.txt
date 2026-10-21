@@ -14,11 +14,15 @@ add_library(meshcentral STATIC
     src/meshcentral/desktop.cpp
     src/meshcentral/keys.cpp
     src/meshcentral/options.cpp
+    src/meshcentral/session.cpp
     src/meshcentral/tiles.cpp
     src/meshcentral/websocket.cpp)
 target_include_directories(meshcentral PUBLIC src)
 target_compile_definitions(meshcentral PUBLIC CASEMENT_PLUGIN_VERSION="${PROJECT_VERSION}")
 target_link_libraries(meshcentral PUBLIC casement winhttp windowscodecs ole32 uuid bcrypt crypt32 gdi32 user32)
+
+casement_plugin_executable(casement-meshcentral src/main.cpp)
+target_link_libraries(casement-meshcentral PRIVATE meshcentral)
 
 casement_test(unit_tests unit
     tests/unit/main.cpp
