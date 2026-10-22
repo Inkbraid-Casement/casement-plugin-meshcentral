@@ -164,6 +164,12 @@ std::string address(const Config& cfg, const std::string& user, const std::strin
 /// Runs a shell command on the Linux side and returns its output. Wine
 /// starts Unix programs but can't wait for them, so the command leaves a
 /// file behind when it's done.
+///
+/// For a Unix program Wine's CreateProcessW returns no process or thread
+/// handle: those fields get whatever its local variables held (Wine 9.0 to
+/// 10.0), sometimes the value of a live handle of this process. Closing them
+/// closed registry keys, events and pipes, the one carrying the plugin's
+/// messages among them, so they are left alone.
 std::string shell(const Config& cfg, const std::string& command, std::chrono::seconds timeout = 60s) {
     static int counter = 0;
     std::string out = cfg.state + "/shell-" + std::to_string(GetCurrentProcessId()) + "-" + std::to_string(++counter);
@@ -178,8 +184,6 @@ std::string shell(const Config& cfg, const std::string& command, std::chrono::se
         check::fail(__FILE__, __LINE__, "can't start /bin/sh", command);
         return {};
     }
-    CloseHandle(pi.hThread);
-    CloseHandle(pi.hProcess);
     auto end = Clock::now() + timeout;
     while (Clock::now() < end) {
         if (read_file(out + ".done")) {
