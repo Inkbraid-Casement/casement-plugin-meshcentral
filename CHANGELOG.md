@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 (unreleased)
+## 0.1.0 (2026-10-23)
 
 - `meshcentral://` connections to the desktops of MeshCentral agents through
   the user's own MeshCentral server, on the Casement plugin protocol v1
