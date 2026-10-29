@@ -28,7 +28,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 ## Installing
 
 Download `casement-meshcentral-v<version>-windows-x64.zip` from this
-repository's [Releases](https://github.com/Inkbraid/casement-plugin-meshcentral/releases)
+repository's [Releases](https://github.com/Inkbraid-Casement/casement-plugin-meshcentral/releases)
 and unpack it into `%LOCALAPPDATA%\Casement\plugins\`, so that you get
 
 ```
@@ -400,7 +400,7 @@ The plugin is licensed under the **Apache License 2.0** ([LICENSE](LICENSE)).
   (casement-plugin-common), under this repository's licence.
 - [docs/plugin-protocol.md](docs/plugin-protocol.md) is a copy of the plugin
   protocol from
-  [Inkbraid/casement-plugin-protocol](https://github.com/Inkbraid/casement-plugin-protocol),
+  [Inkbraid-Casement/casement-plugin-protocol](https://github.com/Inkbraid-Casement/casement-plugin-protocol),
   licensed CC BY 4.0.
 - WinHTTP, WIC, BCrypt, CryptoAPI and GDI are Windows components, used
   through the Windows SDK.
